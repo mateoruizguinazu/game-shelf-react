@@ -25,13 +25,14 @@ export const searchGames = async (query) => {
     return items.map(item => ({
         id: item.getAttribute('id'),
         name: getAttr(item, 'name', 'value'),
-        year: getAttr(item, 'yearpublished', 'value'), // Corregido aquí también
+        year: getAttr(item, 'yearpublished', 'value'),
     }));
   } catch (error) {
     console.error("Error searching games:", error);
     return [];
   }
 };
+
 
 // Función para obtener detalles de juegos por sus IDs
 export const getGameDetails = async (ids) => {
@@ -58,10 +59,29 @@ export const getGameDetails = async (ids) => {
             minPlayers: getAttr(item, 'minplayers', 'value'),
             maxPlayers: getAttr(item, 'maxplayers', 'value'),
             playingTime: getAttr(item, 'playingtime', 'value'),
-            rating: parseFloat(getAttr(item, 'statistics > ratings > average', 'value') || 0).toFixed(1)
+            rating: parseFloat(getAttr(item, 'statistics > ratings > average', 'value') || 0).toFixed(1),
+            usersRated: parseInt(getAttr(item, 'statistics > ratings > usersrated', 'value') || 0)
         }));
     } catch (error) {
         console.error("Error fetching game details:", error);
         return [];
     }
 }
+
+export const getHotGames = async () => {
+  try {
+    const response = await fetch(`${BGG_API_URL}/hot?type=boardgame`);
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const xmlText = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, "application/xml");
+    
+    const items = Array.from(doc.querySelectorAll("item"));
+    // La respuesta de 'hot' ya viene ordenada por popularidad
+    return items.map(item => item.getAttribute('id'));
+  } catch (error) {
+    console.error("Error fetching hot games:", error);
+    return [];
+  }
+};

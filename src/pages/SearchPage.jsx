@@ -6,15 +6,27 @@ import { searchGames } from '../services/bggService';
 import { usePaginatedGames } from '../hooks/usePaginatedGames';
 
 const SearchPage = ({ isFavorite, onToggleFavorite }) => {
-    const [allFoundIds, setAllFoundIds] = useState(null);
-    const { displayedGames, isLoading, hasMore, loadMore } = usePaginatedGames(allFoundIds);
+    const [filteredIds, setFilteredIds] = useState(null);
+    const { displayedGames, isLoading, hasMore, loadMore } = usePaginatedGames(filteredIds);
     const [isSearching, setIsSearching] = useState(false);
 
     const handleSearch = async (query) => {
         setIsSearching(true);
-        setAllFoundIds(null); // Resetea la búsqueda anterior
+        setFilteredIds(null); 
+        
+        // 1. Búsqueda amplia
         const initialResults = await searchGames(query);
-        setAllFoundIds(initialResults.map(game => game.id));
+
+        // 2. Filtramos para quedarnos solo con los que incluyen el 'query' en el nombre
+        const filteredResults = initialResults.filter(game => 
+            game.name && game.name.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        // 3. Extraemos los IDs de la lista ya filtrada
+        const finalIds = filteredResults.map(game => game.id);
+        
+        // 4. Pasamos los IDs limpios al hook de paginación
+        setFilteredIds(finalIds);
         setIsSearching(false);
     };
 
@@ -23,11 +35,13 @@ const SearchPage = ({ isFavorite, onToggleFavorite }) => {
             <SearchBar onSearch={handleSearch} isLoading={isSearching} />
             <section className="search-results">
                 <GameList games={displayedGames} isFavorite={isFavorite} onToggleFavorite={onToggleFavorite} />
-                {(isLoading || isSearching) && <p>Loading...</p>}
-                {hasMore && !isLoading && !isSearching &&(
+                {(isLoading || isSearching) && <p style={{textAlign: 'center'}}>Loading...</p>}
+                {hasMore && !isLoading && !isSearching && (
                     <button onClick={loadMore} className="load-more-btn">Load More</button>
                 )}
-                {allFoundIds && allFoundIds.length === 0 && <p>No results found.</p>}
+                {filteredIds && filteredIds.length === 0 && !isSearching && (
+                    <p style={{textAlign: 'center'}}>No results found with "{document.getElementById('search-bar')?.value}" in the title.</p>
+                )}
             </section>
         </>
     );
