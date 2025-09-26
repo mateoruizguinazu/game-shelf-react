@@ -1,0 +1,10 @@
+/* src/components/Header.css */
+nav ul a {
+    color: var(--light);
+    font-weight: 400;
+}
+
+nav ul a.active {
+    color: var(--primary-color);
+    font-weight: 700;
+}

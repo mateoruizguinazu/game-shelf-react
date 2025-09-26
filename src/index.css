@@ -1,0 +1,400 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    color: var(--lighter);
+    background: var(--darker);
+}
+
+
+/* =================
+    Layout 
+   ================= */
+
+
+
+
+/* =================
+    Navigation 
+   ================= */
+
+nav {
+    padding: 0.5em 1em;
+    margin: 1.5em;
+    font-size: 1rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0 auto;
+    justify-content: center;
+    gap: 1.5em;
+}
+
+.nav ul a.active,
+.nav ul a.active:visited {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+
+/* =================
+    Search bar 
+   ================= */
+
+.search-container {
+    position: relative;
+    padding: 0 1em;
+}
+
+.search-input {
+    width: 100%;
+    background: var(--dark);
+    border: none;
+    border-radius: 0.5em;
+    padding: 0.75em 1em 0.75em 2.5em;
+    color: var(--lighter);
+    font-size: 1rem;
+}
+
+.search-input:focus {                           
+    border: 2px solid --primary-color;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--light);
+}
+
+.search-icon {
+    position: absolute;
+    top: 13.5px;
+    left: 2rem;
+    fill: var(--light);
+}
+
+
+/* =================
+    Trending
+   ================= */
+/* 
+.carousel {
+    position: relative;
+    margin: 1.5em 0;
+}
+
+.carousel-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; 
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-container::-webkit-scrollbar-thumb {
+            background-color: #4a4a4a;
+            border-radius: 10px;
+        }
+
+        .carousel-container::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+        }
+
+.carousel-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1em;
+    margin: 0;
+    padding: 0 1em;
+}
+
+.carousel-item {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    flex-basis: 80vw;
+    max-width: 300px;
+}
+
+.carousel-item:last-child {
+    margin-right: 1em;
+} */
+
+.game-grid {
+    display: grid;
+    /* Crea columnas que se ajustan automáticamente */
+    /* Cada columna tendrá un mínimo de 300px y se expandirá para ocupar el espacio */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; /* Espacio entre las tarjetas */
+    padding: 1em;
+}
+
+.game-grid-item {
+    /* Opcional: define un ancho máximo para las tarjetas en pantallas muy grandes */
+    max-width: 460px;
+    /* Justifica el item en el centro de la celda de la grilla si hay espacio extra */
+    justify-self: center; 
+    width: 100%;
+}
+
+
+.game-card {
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    position: relative;
+    height: 100%;
+    padding: 1em;
+    height: 452px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.game-card,
+.recommended-game-cover {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.game-card::after {
+    content: '';
+    position: absolute;
+    border-radius: 8px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.game-card-top-elements,
+.game-card-header, 
+.game-labels {
+    position: relative;
+    z-index: 2;
+}
+
+.game-card-top-elements {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    right: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.rating, 
+.favorite-button {
+    background: var(--darker);
+    padding: 0.375em 0.5em;
+    color: var(--primary-color);
+    font-weight: 700;
+    border-radius: 4px;
+    border: none;
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-button {
+    cursor: pointer;
+}
+
+.favorite-button:hover {
+    background: var(--like);
+    transition: 300ms;
+}
+
+.game-card-header {
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.game-card-header h3,
+.game-card-header p {
+    margin: 0;
+}
+
+.game-labels {
+    display: flex;
+    gap: 0.5em;
+}
+
+.game-tag {
+    padding: 0.25em 0.375em;
+    background: var(--dark);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-card p,
+.recommended-game-info p {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+            line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+
+
+
+/* =================
+    Recommended games 
+   ================= */
+
+.recommended-games {
+    padding: 1em;
+}   
+
+.recommended-games ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.recommended-games article {
+    display: flex;
+    gap: 1em;
+}
+
+.recommended-game-cover {
+    width: 30vw;
+    min-width: 120px;
+    max-width: 200px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: end;
+    align-items: start;
+    padding: 0.25em;
+}
+
+.recommended-game-info {
+    margin-bottom: 1.5em;
+}
+
+
+/* =================
+    Text 
+   ================= */
+
+h2,
+h3 {
+    margin: 0;
+}
+
+a, 
+a:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =================
+    Miscellaneous 
+   ================= */
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    white-space: nowrap;
+    clip-path: inset(100%);
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+}
+
+:root {
+    --darker: #111317;
+    --dark: #25262A;
+    --primary-color: #FFFF57;
+    --light: #B8B9BD;
+    --lighter: #ffffff;
+    --like: #FF5757;
+    --delete: #9B1616;
+}
+
+
+/* Ejemplo de media query para desktop */
+@media (min-width: 768px) {
+    .carousel-item {
+        flex-basis: 300px; /* Tamaño fijo en desktop */
+    }
+
+    .recommended-games ul {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+
+/* index.css (añadir al final) */
+
+.game-card {
+    /* Quitamos el background del article y lo hacemos un contenedor de posición */
+    position: relative;
+    overflow: hidden; /* Oculta partes de la imagen que se salgan */
+}
+
+.game-card-background, .game-card-background-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra todo el espacio */
+    z-index: 0;
+}
+
+.game-card-background-fallback {
+    background-color: var(--dark);
+}
+
+.game-card-content {
+    /* Este contenedor pone el texto y botones por encima de la imagen */
+    position: relative;
+    z-index: 2;
+    padding: 1em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.load-more-btn {
+    display: block;
+    margin: 2rem auto;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--darker);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
