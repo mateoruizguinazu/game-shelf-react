@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import TrendingPage from './pages/TrendingPage';
 import FavoritesPage from './pages/FavoritesPage';
 import SearchPage from './pages/SearchPage';
@@ -74,6 +75,8 @@ function App() {
           />
         </Routes>
       </main>
+
+      <Footer />
 
       {selectedGame && (
         <GameDetails
