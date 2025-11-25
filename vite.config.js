@@ -53,10 +53,7 @@ export default defineConfig(({ mode }) => {
             proxy.on('proxyReq', (proxyReq, req, res) => {
               // Solo añade el header si el token existe
               if (env.VITE_BGG_API_TOKEN) {
-                console.log('Adding Authorization header to request:', req.url);
                 proxyReq.setHeader('Authorization', `Bearer ${env.VITE_BGG_API_TOKEN}`);
-              } else {
-                console.warn('VITE_BGG_API_TOKEN is missing! Authorization header not added.');
               }
             });
           }

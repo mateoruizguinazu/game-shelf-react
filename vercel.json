@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/bgg/:path*",
+            "destination": "/api/proxy?path=:path*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
