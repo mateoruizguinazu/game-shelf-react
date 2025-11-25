@@ -1,13 +1,18 @@
 // src/pages/TrendingPage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import GameList from '../components/GameList';
+import FilterBar from '../components/FilterBar';
 import { usePaginatedGames } from '../hooks/usePaginatedGames';
 import { getHotGames } from '../services/bggService';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
-const TrendingPage = ({ isFavorite, onToggleFavorite }) => {
+const TrendingPage = ({ isFavorite, onToggleFavorite, onGameClick }) => {
     const [hotGameIds, setHotGameIds] = useState(null);
     const { displayedGames, isLoading, hasMore, loadMore } = usePaginatedGames(hotGameIds);
     const [isFetchingIds, setIsFetchingIds] = useState(true);
+    const [filters, setFilters] = useState({ minRating: '', year: '' });
+
+    const loadMoreRef = useInfiniteScroll(loadMore, hasMore, isLoading);
 
     useEffect(() => {
         const fetchHotIds = async () => {
@@ -19,12 +24,35 @@ const TrendingPage = ({ isFavorite, onToggleFavorite }) => {
         fetchHotIds();
     }, []);
 
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    const filteredGames = useMemo(() => {
+        return displayedGames.filter(game => {
+            if (filters.minRating && parseFloat(game.rating) < parseFloat(filters.minRating)) return false;
+            if (filters.year && game.year !== filters.year) return false;
+            return true;
+        });
+    }, [displayedGames, filters]);
+
     return (
         <div>
-            <GameList games={displayedGames} isFavorite={isFavorite} onToggleFavorite={onToggleFavorite} />
-            {(isLoading || isFetchingIds) && <p style={{textAlign: 'center'}}>Loading...</p>}
+            <FilterBar onFilterChange={handleFilterChange} />
+            <GameList
+                games={filteredGames}
+                isFavorite={isFavorite}
+                onToggleFavorite={onToggleFavorite}
+                onGameClick={onGameClick}
+            />
+            {(isLoading || isFetchingIds) && <p style={{ textAlign: 'center', padding: '2rem' }}>Loading...</p>}
+
             {hasMore && !isLoading && !isFetchingIds && (
-                <button onClick={loadMore} className="load-more-btn">Load More</button>
+                <div ref={loadMoreRef} style={{ height: '20px', margin: '1rem 0' }}></div>
+            )}
+
+            {filteredGames.length === 0 && !isLoading && !isFetchingIds && (
+                <p style={{ textAlign: 'center', marginTop: '2rem' }}>No games match your filters. Try scrolling down to load more.</p>
             )}
         </div>
     );

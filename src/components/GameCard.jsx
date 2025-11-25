@@ -4,53 +4,51 @@ import HeartIcon from '../assets/heart.svg?react';
 import PlayerIcon from '../assets/player.svg?react';
 import TimeIcon from '../assets/time.svg?react';
 
-const GameCard = ({ game, isFavorite, onToggleFavorite }) => {
-    
+const GameCard = ({ game, isFavorite, onToggleFavorite, onClick }) => {
+
     const handleFavoriteClick = (e) => {
-        e.preventDefault(); // Evita el comportamiento por defecto del enlace
-        e.stopPropagation(); // Detiene la propagación del clic hacia la etiqueta <a>
+        e.preventDefault();
+        e.stopPropagation();
         onToggleFavorite(game.id);
     };
 
     const cleanImageUrl = game.image?.match(/https?:\/\/[^\s]+/)?.[0];
-    const hasValidImage = !!cleanImageUrl;
-
-    const descriptionText = game.description 
-        ? game.description.split('.')[0] + '.' 
-        : 'No description available.';
 
     return (
-        // Se ha cambiado la estructura para usar una etiqueta <img>
-        <article className="game-card">
-            {hasValidImage ? (
-                <img src={cleanImageUrl} alt={`Cover for ${game.name}`} className="game-card-background" />
-            ) : (
-                <div className="game-card-background-fallback"></div>
+        <article className="game-card" onClick={() => onClick && onClick(game)}>
+            {cleanImageUrl && (
+                <img src={cleanImageUrl} alt={game.name} className="game-card-bg" loading="lazy" />
             )}
-            
-            {/* Todo el contenido ahora va dentro de un contenedor */}
+            <div className="game-card-overlay"></div>
+
             <div className="game-card-content">
-                <div className="game-card-top-elements">
-                    <span className="rating">
-                        <StarIcon /> {game.rating}
-                    </span>
-                    <button 
-                        className="favorite-button" 
-                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                <div className="game-card-top">
+                    <div className="rating-badge">
+                        <StarIcon width="14" height="14" />
+                        {game.rating}
+                    </div>
+                    <button
+                        className={`fav-btn ${isFavorite ? 'active' : ''}`}
                         onClick={handleFavoriteClick}
-                        style={{ backgroundColor: isFavorite ? 'var(--like)' : 'var(--darker)' }}
+                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                     >
-                        <HeartIcon />
+                        <HeartIcon width="18" height="18" fill={isFavorite ? "currentColor" : "none"} />
                     </button>
                 </div>
-                <header className="game-card-header">
+
+                <div className="game-info">
                     <h3>{game.name}</h3>
-                    <p>{descriptionText}</p>
-                </header>
-                <div className="game-labels">
-                    <span className="game-tag">{game.year}</span>
-                    <span className="game-tag"><PlayerIcon /> {game.minPlayers}-{game.maxPlayers}</span>
-                    <span className="game-tag"><TimeIcon /> {game.playingTime} min</span>
+                    <div className="game-meta">
+                        <span>{game.year}</span>
+                        <span>•</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <PlayerIcon width="14" height="14" /> {game.minPlayers}-{game.maxPlayers}
+                        </span>
+                        <span>•</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <TimeIcon width="14" height="14" /> {game.playingTime}m
+                        </span>
+                    </div>
                 </div>
             </div>
         </article>

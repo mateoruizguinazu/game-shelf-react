@@ -1,27 +1,22 @@
 // src/components/GameList.jsx
 import GameCard from './GameCard';
 
-const GameList = ({ games, isFavorite, onToggleFavorite }) => {
+const GameList = ({ games, isFavorite, onToggleFavorite, onGameClick }) => {
     if (!games || games.length === 0) {
-        return null; // No renderizar nada si no hay juegos
+        return null;
     }
 
     return (
         <div className="game-grid">
             {games.map(game => (
-                <a 
-                    key={game.id}
-                    href={`https://boardgamegeek.com/boardgame/${game.id}`}
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="game-grid-item"
-                >
+                <div key={game.id} className="game-grid-item" style={{ cursor: 'pointer' }}>
                     <GameCard
                         game={game}
                         isFavorite={isFavorite(game.id)}
                         onToggleFavorite={onToggleFavorite}
+                        onClick={onGameClick}
                     />
-                </a>
+                </div>
             ))}
         </div>
     );

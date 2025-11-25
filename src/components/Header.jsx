@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import { NavLink } from 'react-router-dom';
-import './Header.css'; // Crearemos este archivo CSS para el estilo del enlace activo
+
 
 const Header = () => {
   return (
