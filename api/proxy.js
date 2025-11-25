@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const queryParams = new URLSearchParams(req.query);
     queryParams.delete('path'); // Remove the path param used for routing
 
-    const targetUrl = `https://boardgamegeek.com/xmlapi2/${Array.isArray(path) ? path.join('/') : path}?${queryParams.toString()}`;
+    const targetUrl = `https://boardgamegeek.com/${Array.isArray(path) ? path.join('/') : path}?${queryParams.toString()}`;
 
     try {
         const response = await fetch(targetUrl, {
