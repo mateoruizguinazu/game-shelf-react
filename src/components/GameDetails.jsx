@@ -5,7 +5,7 @@ import HeartIcon from '../assets/heart.svg?react';
 import PlayerIcon from '../assets/player.svg?react';
 import TimeIcon from '../assets/time.svg?react';
 
-const GameDetails = ({ game, onClose, isFavorite, onToggleFavorite }) => {
+const GameDetails = ({ game, onClose, inCollection, onToggleCollection, inWishlist, onToggleWishlist }) => {
     if (!game) return null;
 
     // Prevent body scroll when modal is open
@@ -53,13 +53,20 @@ const GameDetails = ({ game, onClose, isFavorite, onToggleFavorite }) => {
                             <span>{game.rating}</span>
                             <span className="rating-count">({game.usersRated} ratings)</span>
                         </div>
-                        <button
-                            className={`btn btn-primary ${isFavorite ? 'active' : ''}`}
-                            onClick={() => onToggleFavorite(game.id)}
-                        >
-                            <HeartIcon width="20" height="20" fill={isFavorite ? "currentColor" : "none"} />
-                            {isFavorite ? 'Saved to Shelf' : 'Add to Shelf'}
-                        </button>
+                        <div className="action-buttons">
+                            <button
+                                className={`btn ${inCollection ? 'btn-primary' : 'btn-outline'}`}
+                                onClick={() => onToggleCollection(game.id)}
+                            >
+                                {inCollection ? 'In Shelf' : 'Add to Shelf'}
+                            </button>
+                            <button
+                                className={`btn ${inWishlist ? 'btn-secondary' : 'btn-outline'}`}
+                                onClick={() => onToggleWishlist(game.id)}
+                            >
+                                {inWishlist ? 'In Wishlist' : 'Add to Wishlist'}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="modal-description">
@@ -77,7 +84,7 @@ const GameDetails = ({ game, onClose, isFavorite, onToggleFavorite }) => {
                     </a>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

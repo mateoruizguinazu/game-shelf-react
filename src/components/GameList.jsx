@@ -1,7 +1,7 @@
 // src/components/GameList.jsx
 import GameCard from './GameCard';
 
-const GameList = ({ games, isFavorite, onToggleFavorite, onGameClick }) => {
+const GameList = ({ games, onGameClick }) => {
     if (!games || games.length === 0) {
         return null;
     }
@@ -12,8 +12,6 @@ const GameList = ({ games, isFavorite, onToggleFavorite, onGameClick }) => {
                 <div key={game.id} className="game-grid-item" style={{ cursor: 'pointer' }}>
                     <GameCard
                         game={game}
-                        isFavorite={isFavorite(game.id)}
-                        onToggleFavorite={onToggleFavorite}
                         onClick={onGameClick}
                     />
                 </div>

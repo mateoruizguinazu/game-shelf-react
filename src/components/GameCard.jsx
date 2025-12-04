@@ -4,7 +4,7 @@ import HeartIcon from '../assets/heart.svg?react';
 import PlayerIcon from '../assets/player.svg?react';
 import TimeIcon from '../assets/time.svg?react';
 
-const GameCard = ({ game, isFavorite, onToggleFavorite, onClick }) => {
+const GameCard = ({ game, onClick }) => {
 
     const handleFavoriteClick = (e) => {
         e.preventDefault();
@@ -27,13 +27,6 @@ const GameCard = ({ game, isFavorite, onToggleFavorite, onClick }) => {
                         <StarIcon width="14" height="14" />
                         {game.rating}
                     </div>
-                    <button
-                        className={`fav-btn ${isFavorite ? 'active' : ''}`}
-                        onClick={handleFavoriteClick}
-                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                    >
-                        <HeartIcon width="18" height="18" fill={isFavorite ? "currentColor" : "none"} />
-                    </button>
                 </div>
 
                 <div className="game-info">

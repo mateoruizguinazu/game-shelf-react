@@ -4,14 +4,20 @@ import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import TrendingPage from './pages/TrendingPage';
-import FavoritesPage from './pages/FavoritesPage';
+
 import SearchPage from './pages/SearchPage';
+import ShelfPage from './pages/ShelfPage';
+import WishlistPage from './pages/WishlistPage';
 import GameDetails from './components/GameDetails';
 import Toast from './components/Toast';
-import { useFavorites } from './hooks/useFavorites';
+import { useLibrary } from './hooks/useLibrary';
 
 function App() {
-  const { favoriteIds, addFavorite, removeFavorite, isFavorite } = useFavorites();
+  const {
+    collection, addToCollection, removeFromCollection, inCollection,
+    wishlist, addToWishlist, removeFromWishlist, inWishlist
+  } = useLibrary();
+
   const [selectedGame, setSelectedGame] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -19,13 +25,23 @@ function App() {
     setToast({ message, type });
   };
 
-  const handleToggleFavorite = (gameId) => {
-    if (isFavorite(gameId)) {
-      removeFavorite(gameId);
+  const handleToggleCollection = (gameId) => {
+    if (inCollection(gameId)) {
+      removeFromCollection(gameId);
       showToast('Removed from shelf', 'success');
     } else {
-      addFavorite(gameId);
+      addToCollection(gameId);
       showToast('Added to shelf', 'success');
+    }
+  };
+
+  const handleToggleWishlist = (gameId) => {
+    if (inWishlist(gameId)) {
+      removeFromWishlist(gameId);
+      showToast('Removed from wishlist', 'success');
+    } else {
+      addToWishlist(gameId);
+      showToast('Added to wishlist', 'success');
     }
   };
 
@@ -46,8 +62,6 @@ function App() {
             path="/"
             element={
               <TrendingPage
-                isFavorite={isFavorite}
-                onToggleFavorite={handleToggleFavorite}
                 onGameClick={handleGameClick}
               />
             }
@@ -56,19 +70,24 @@ function App() {
             path="/search"
             element={
               <SearchPage
-                isFavorite={isFavorite}
-                onToggleFavorite={handleToggleFavorite}
                 onGameClick={handleGameClick}
               />
             }
           />
           <Route
-            path="/favorites"
+            path="/shelf"
             element={
-              <FavoritesPage
-                favoriteIds={favoriteIds}
-                isFavorite={isFavorite}
-                onToggleFavorite={handleToggleFavorite}
+              <ShelfPage
+                collectionIds={collection}
+                onGameClick={handleGameClick}
+              />
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <WishlistPage
+                wishlistIds={wishlist}
                 onGameClick={handleGameClick}
               />
             }
@@ -82,8 +101,10 @@ function App() {
         <GameDetails
           game={selectedGame}
           onClose={handleCloseModal}
-          isFavorite={isFavorite(selectedGame.id)}
-          onToggleFavorite={handleToggleFavorite}
+          inCollection={inCollection(selectedGame.id)}
+          onToggleCollection={handleToggleCollection}
+          inWishlist={inWishlist(selectedGame.id)}
+          onToggleWishlist={handleToggleWishlist}
         />
       )}
 

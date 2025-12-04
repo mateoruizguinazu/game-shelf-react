@@ -1,14 +1,16 @@
 // src/pages/SearchPage.jsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SearchBar from '../components/SearchBar';
 import GameList from '../components/GameList';
+import FilterBar from '../components/FilterBar';
 import { searchGames } from '../services/bggService';
 import { usePaginatedGames } from '../hooks/usePaginatedGames';
 
-const SearchPage = ({ isFavorite, onToggleFavorite, onGameClick }) => {
+const SearchPage = ({ onGameClick }) => {
     const [filteredIds, setFilteredIds] = useState(null);
     const { displayedGames, isLoading, hasMore, loadMore } = usePaginatedGames(filteredIds);
     const [isSearching, setIsSearching] = useState(false);
+    const [filters, setFilters] = useState({ minRating: '', year: '' });
 
     const handleSearch = async (query) => {
         setIsSearching(true);
@@ -30,11 +32,28 @@ const SearchPage = ({ isFavorite, onToggleFavorite, onGameClick }) => {
         setIsSearching(false);
     };
 
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    const filteredGames = useMemo(() => {
+        return displayedGames.filter(game => {
+            if (filters.minRating && parseFloat(game.rating) < parseFloat(filters.minRating)) return false;
+            if (filters.year && game.year !== filters.year) return false;
+            return true;
+        });
+    }, [displayedGames, filters]);
+
     return (
         <>
             <SearchBar onSearch={handleSearch} isLoading={isSearching} />
+
+            {filteredIds && filteredIds.length > 0 && (
+                <FilterBar onFilterChange={handleFilterChange} title="Filter Results" />
+            )}
+
             <section className="search-results">
-                <GameList games={displayedGames} isFavorite={isFavorite} onToggleFavorite={onToggleFavorite} onGameClick={onGameClick} />
+                <GameList games={filteredGames} onGameClick={onGameClick} />
                 {(isLoading || isSearching) && <p style={{ textAlign: 'center' }}>Loading...</p>}
                 {hasMore && !isLoading && !isSearching && (
                     <button onClick={loadMore} className="load-more-btn">Load More</button>

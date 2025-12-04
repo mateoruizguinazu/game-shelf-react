@@ -64,7 +64,9 @@ export const getGameDetails = async (ids) => {
       maxPlayers: getAttr(item, 'maxplayers', 'value'),
       playingTime: getAttr(item, 'playingtime', 'value'),
       rating: parseFloat(getAttr(item, 'statistics > ratings > average', 'value') || 0).toFixed(1),
-      usersRated: parseInt(getAttr(item, 'statistics > ratings > usersrated', 'value') || 0)
+      usersRated: parseInt(getAttr(item, 'statistics > ratings > usersrated', 'value') || 0),
+      mechanics: Array.from(item.querySelectorAll('link[type="boardgamemechanic"]')).map(link => link.getAttribute('value')),
+      isCooperative: Array.from(item.querySelectorAll('link[type="boardgamemechanic"]')).some(link => link.getAttribute('value') === 'Cooperative Game')
     }));
   } catch (error) {
     console.error("Error fetching game details:", error);
