@@ -30,9 +30,12 @@ const TrendingPage = ({ onGameClick }) => {
     };
 
     const filteredGames = useMemo(() => {
+        // Filter displayed games based on criteria
         return displayedGames.filter(game => {
             if (filters.minRating && parseFloat(game.rating) < parseFloat(filters.minRating)) return false;
             if (filters.year && game.year !== filters.year) return false;
+            if (filters.minPlayers && parseInt(game.maxPlayers) < parseInt(filters.minPlayers)) return false;
+            if (filters.maxTime && parseInt(game.playingTime) > parseInt(filters.maxTime)) return false;
             return true;
         });
     }, [displayedGames, filters]);

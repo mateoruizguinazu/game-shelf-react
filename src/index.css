@@ -631,6 +631,7 @@ a {
 /* Hamburger Button */
 .hamburger-btn {
     display: none;
+    /* Hidden by default on desktop */
     flex-direction: column;
     justify-content: space-between;
     width: 30px;
@@ -664,10 +665,17 @@ a {
     background-color: var(--primary);
 }
 
+/* Dropdown */
+.user-menu:hover .dropdown-content,
+.dropdown-content.show {
+    display: flex !important;
+}
+
 /* Mobile Navigation */
 @media (max-width: 768px) {
     .hamburger-btn {
         display: flex;
+        /* Show only on mobile */
     }
 
     .nav {

@@ -6,7 +6,7 @@ import { getGameDetails } from '../services/bggService';
 const ShelfPage = ({ collectionIds, onGameClick }) => {
     const [allGames, setAllGames] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [filters, setFilters] = useState({ players: '', duration: '', type: '' });
+    const [filters, setFilters] = useState({ players: '', duration: '' });
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -48,12 +48,6 @@ const ShelfPage = ({ collectionIds, onGameClick }) => {
                 if (filters.duration === 'long' && time <= 60) return false;
             }
 
-            // Filter by Type
-            if (filters.type) {
-                if (filters.type === 'cooperative' && !game.isCooperative) return false;
-                if (filters.type === 'competitive' && game.isCooperative) return false;
-            }
-
             return true;
         });
     }, [allGames, filters]);
@@ -63,10 +57,10 @@ const ShelfPage = ({ collectionIds, onGameClick }) => {
     };
 
     const clearFilters = () => {
-        setFilters({ players: '', duration: '', type: '' });
+        setFilters({ players: '', duration: '' });
     };
 
-    const hasActiveFilters = filters.players || filters.duration || filters.type;
+    const hasActiveFilters = filters.players || filters.duration;
 
     if (!isLoading && collectionIds.length === 0) {
         return (

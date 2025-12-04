@@ -10,7 +10,7 @@ const SearchPage = ({ onGameClick }) => {
     const [filteredIds, setFilteredIds] = useState(null);
     const { displayedGames, isLoading, hasMore, loadMore } = usePaginatedGames(filteredIds);
     const [isSearching, setIsSearching] = useState(false);
-    const [filters, setFilters] = useState({ minRating: '', year: '' });
+    const [filters, setFilters] = useState({ minRating: '', year: '', minPlayers: '', maxTime: '' });
 
     const handleSearch = async (query) => {
         setIsSearching(true);
@@ -40,6 +40,8 @@ const SearchPage = ({ onGameClick }) => {
         return displayedGames.filter(game => {
             if (filters.minRating && parseFloat(game.rating) < parseFloat(filters.minRating)) return false;
             if (filters.year && game.year !== filters.year) return false;
+            if (filters.minPlayers && parseInt(game.maxPlayers) < parseInt(filters.minPlayers)) return false;
+            if (filters.maxTime && parseInt(game.playingTime) > parseInt(filters.maxTime)) return false;
             return true;
         });
     }, [displayedGames, filters]);

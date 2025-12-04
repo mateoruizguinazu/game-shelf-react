@@ -1,67 +1,115 @@
+
 import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../supabaseClient';
 
 export const useLibrary = () => {
-    // Collection (My Shelf)
-    const [collection, setCollection] = useState(() => {
-        const saved = localStorage.getItem('gameShelf_collection');
-        return saved ? JSON.parse(saved) : [];
-    });
+    const { user } = useAuth();
+    const [collection, setCollection] = useState([]);
+    const [wishlist, setWishlist] = useState([]);
 
-    // Wishlist
-    const [wishlist, setWishlist] = useState(() => {
-        const saved = localStorage.getItem('gameShelf_wishlist');
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    // Persistence
+    // Load initial data
     useEffect(() => {
-        localStorage.setItem('gameShelf_collection', JSON.stringify(collection));
-    }, [collection]);
+        if (user) {
+            // Load from Supabase
+            const fetchData = async () => {
+                const { data, error } = await supabase
+                    .from('user_games')
+                    .select('game_id, list_type')
+                    .eq('user_id', user.id);
 
-    useEffect(() => {
-        localStorage.setItem('gameShelf_wishlist', JSON.stringify(wishlist));
-    }, [wishlist]);
+                if (error) {
+                    console.error('Error fetching user games:', error);
+                } else {
+                    const newCollection = data.filter(item => item.list_type === 'collection').map(item => item.game_id);
+                    const newWishlist = data.filter(item => item.list_type === 'wishlist').map(item => item.game_id);
+                    setCollection(newCollection);
+                    setWishlist(newWishlist);
+                }
+            };
+            fetchData();
+        } else {
+            // Load from LocalStorage
+            const storedCollection = JSON.parse(localStorage.getItem('gameShelf_collection')) || [];
+            const storedWishlist = JSON.parse(localStorage.getItem('gameShelf_wishlist')) || [];
+            setCollection(storedCollection);
+            setWishlist(storedWishlist);
+        }
+    }, [user]);
 
-    // Actions
+    // Helper to update DB
+    const updateDb = async (gameId, listType, action) => {
+        if (!user) return;
+
+        if (action === 'add') {
+            const { error } = await supabase
+                .from('user_games')
+                .insert([{ user_id: user.id, game_id: gameId, list_type: listType }]);
+            if (error) console.error('Error adding game:', error);
+        } else {
+            const { error } = await supabase
+                .from('user_games')
+                .delete()
+                .match({ user_id: user.id, game_id: gameId, list_type: listType });
+            if (error) console.error('Error removing game:', error);
+        }
+    };
+
     const addToCollection = (gameId) => {
-        setCollection(prev => {
-            if (prev.includes(gameId)) return prev;
-            return [...prev, gameId];
-        });
-        // Optional: Remove from wishlist if added to collection? 
-        // Let's keep them independent for now, or maybe remove from wishlist is better UX.
-        // User said "keep the idea of the wishlist but separated". 
-        // Usually if you own it, you don't want it.
-        removeFromWishlist(gameId);
+        if (!collection.includes(gameId)) {
+            const newCollection = [...collection, gameId];
+            setCollection(newCollection);
+            if (user) {
+                updateDb(gameId, 'collection', 'add');
+            } else {
+                localStorage.setItem('gameShelf_collection', JSON.stringify(newCollection));
+            }
+        }
     };
 
     const removeFromCollection = (gameId) => {
-        setCollection(prev => prev.filter(id => id !== gameId));
+        const newCollection = collection.filter(id => id !== gameId);
+        setCollection(newCollection);
+        if (user) {
+            updateDb(gameId, 'collection', 'remove');
+        } else {
+            localStorage.setItem('gameShelf_collection', JSON.stringify(newCollection));
+        }
     };
 
-    const inCollection = (gameId) => collection.includes(gameId);
-
     const addToWishlist = (gameId) => {
-        setWishlist(prev => {
-            if (prev.includes(gameId)) return prev;
-            return [...prev, gameId];
-        });
+        if (!wishlist.includes(gameId)) {
+            const newWishlist = [...wishlist, gameId];
+            setWishlist(newWishlist);
+            if (user) {
+                updateDb(gameId, 'wishlist', 'add');
+            } else {
+                localStorage.setItem('gameShelf_wishlist', JSON.stringify(newWishlist));
+            }
+        }
     };
 
     const removeFromWishlist = (gameId) => {
-        setWishlist(prev => prev.filter(id => id !== gameId));
+        const newWishlist = wishlist.filter(id => id !== gameId);
+        setWishlist(newWishlist);
+        if (user) {
+            updateDb(gameId, 'wishlist', 'remove');
+        } else {
+            localStorage.setItem('gameShelf_wishlist', JSON.stringify(newWishlist));
+        }
     };
 
-    const inWishlist = (gameId) => wishlist.includes(gameId);
+    const isInCollection = (gameId) => collection.includes(gameId);
+    const isInWishlist = (gameId) => wishlist.includes(gameId);
 
     return {
         collection,
+        wishlist,
         addToCollection,
         removeFromCollection,
-        inCollection,
-        wishlist,
+        isInCollection,
         addToWishlist,
         removeFromWishlist,
-        inWishlist
+        isInWishlist
     };
 };
